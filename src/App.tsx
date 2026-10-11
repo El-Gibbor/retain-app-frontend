@@ -1,9 +1,12 @@
 import { Route, Routes } from 'react-router';
+import AppLayout from './components/layout/AppLayout';
 import AdminRoute from './components/routing/AdminRoute';
 import GuestRoute from './components/routing/GuestRoute';
 import ProtectedRoute from './components/routing/ProtectedRoute';
 import AdminPage from './pages/AdminPage';
-import HomePage from './pages/HomePage';
+import BudgetPage from './pages/BudgetPage';
+import DashboardPage from './pages/DashboardPage';
+import ExpensesPage from './pages/ExpensesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import SignInPage from './pages/SignInPage';
 import SignUpPage from './pages/SignUpPage';
@@ -17,9 +20,13 @@ export default function App() {
       </Route>
 
       <Route element={<ProtectedRoute />}>
-        <Route path="/" element={<HomePage />} />
-        <Route element={<AdminRoute />}>
-          <Route path="/admin" element={<AdminPage />} />
+        <Route element={<AppLayout />}>
+          <Route path="/" element={<DashboardPage />} />
+          <Route path="/expenses" element={<ExpensesPage />} />
+          <Route path="/budget" element={<BudgetPage />} />
+          <Route element={<AdminRoute />}>
+            <Route path="/admin" element={<AdminPage />} />
+          </Route>
         </Route>
       </Route>
 
