@@ -1,5 +1,6 @@
 import { Box, Card, CardContent, Stack, Typography } from '@mui/material';
 import type { ReactNode } from 'react';
+import Logo from '../common/Logo';
 
 interface AuthLayoutProps {
   title: string;
@@ -15,12 +16,9 @@ export default function AuthLayout({ title, subtitle, children, footer }: AuthLa
       sx={{ minHeight: '100vh', display: 'grid', placeItems: 'center', px: 2, py: 4 }}
     >
       <Stack spacing={3} sx={{ width: '100%', maxWidth: 420 }}>
-        <Stack direction="row" spacing={1.5} sx={{ alignItems: 'center', justifyContent: 'center' }}>
-          <Box component="img" src="/favicon.svg" alt="" sx={{ width: 40, height: 40 }} />
-          <Typography variant="h5" component="span" sx={{ fontWeight: 700 }}>
-            Retain
-          </Typography>
-        </Stack>
+        <Box sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Logo size={44} />
+        </Box>
         <Card>
           <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
             <Typography variant="h5" component="h1" gutterBottom>

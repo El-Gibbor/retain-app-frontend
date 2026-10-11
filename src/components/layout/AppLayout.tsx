@@ -1,22 +1,12 @@
 import { Menu as MenuIcon } from '@mui/icons-material';
-import { AppBar, Box, Drawer, IconButton, Stack, Toolbar, Typography } from '@mui/material';
+import { AppBar, Box, Drawer, IconButton, Toolbar } from '@mui/material';
 import { useState } from 'react';
 import { Outlet } from 'react-router';
+import Logo from '../common/Logo';
 import NavList from './NavList';
 import UserMenu from './UserMenu';
 
 const DRAWER_WIDTH = 248;
-
-function Brand() {
-  return (
-    <Stack direction="row" spacing={1.25} sx={{ alignItems: 'center' }}>
-      <Box component="img" src="/favicon.svg" alt="" sx={{ width: 32, height: 32 }} />
-      <Typography variant="h6" component="span" sx={{ fontWeight: 700 }}>
-        Retain
-      </Typography>
-    </Stack>
-  );
-}
 
 export default function AppLayout() {
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -24,7 +14,7 @@ export default function AppLayout() {
   const drawerContent = (onNavigate?: () => void) => (
     <>
       <Toolbar sx={{ px: 2.5 }}>
-        <Brand />
+        <Logo />
       </Toolbar>
       <NavList onNavigate={onNavigate} />
     </>
@@ -34,14 +24,9 @@ export default function AppLayout() {
     <Box sx={{ display: 'flex', minHeight: '100vh' }}>
       <AppBar
         position="fixed"
-        color="inherit"
-        elevation={0}
         sx={{
           width: { md: `calc(100% - ${DRAWER_WIDTH}px)` },
           ml: { md: `${DRAWER_WIDTH}px` },
-          borderBottom: 1,
-          borderColor: 'divider',
-          bgcolor: 'background.paper',
         }}
       >
         <Toolbar sx={{ gap: 1 }}>
@@ -54,7 +39,7 @@ export default function AppLayout() {
             <MenuIcon />
           </IconButton>
           <Box sx={{ display: { md: 'none' } }}>
-            <Brand />
+            <Logo />
           </Box>
           <Box sx={{ flexGrow: 1 }} />
           <UserMenu />
