@@ -1,6 +1,8 @@
+import { EditOutlined } from '@mui/icons-material';
 import {
   Box,
   Chip,
+  IconButton,
   List,
   ListItem,
   Skeleton,
@@ -11,10 +13,12 @@ import {
   TableContainer,
   TableHead,
   TableRow,
+  Tooltip,
   Typography,
   useMediaQuery,
 } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
+import { visuallyHidden } from '../../utils/a11y';
 import type { Expense } from '../../types/expense';
 import { formatCurrency, formatDate, PAYMENT_METHOD_LABELS } from '../../utils/format';
 
@@ -22,13 +26,14 @@ interface ExpenseListProps {
   expenses: Expense[];
   /** Shows skeleton rows in place of data */
   skeletonRows?: number;
+  onEdit?: (expense: Expense) => void;
 }
 
 function CategoryChip({ name }: { name: string }) {
   return <Chip label={name} size="small" variant="outlined" sx={{ maxWidth: '100%' }} />;
 }
 
-function ExpenseTable({ expenses, skeletonRows }: ExpenseListProps) {
+function ExpenseTable({ expenses, skeletonRows, onEdit }: ExpenseListProps) {
   return (
     <TableContainer>
       <Table aria-label="Expenses">
@@ -39,13 +44,20 @@ function ExpenseTable({ expenses, skeletonRows }: ExpenseListProps) {
             <TableCell>Date</TableCell>
             <TableCell>Payment</TableCell>
             <TableCell align="right">Amount</TableCell>
+            {onEdit && (
+              <TableCell align="right" sx={{ width: 64 }}>
+                <Box component="span" sx={visuallyHidden}>
+                  Actions
+                </Box>
+              </TableCell>
+            )}
           </TableRow>
         </TableHead>
         <TableBody>
           {skeletonRows
             ? Array.from({ length: skeletonRows }, (_, index) => (
                 <TableRow key={index}>
-                  {Array.from({ length: 5 }, (_, cell) => (
+                  {Array.from({ length: onEdit ? 6 : 5 }, (_, cell) => (
                     <TableCell key={cell}>
                       <Skeleton />
                     </TableCell>
@@ -72,6 +84,15 @@ function ExpenseTable({ expenses, skeletonRows }: ExpenseListProps) {
                   <TableCell align="right" sx={{ fontWeight: 600, whiteSpace: 'nowrap' }}>
                     {formatCurrency(expense.amount)}
                   </TableCell>
+                  {onEdit && (
+                    <TableCell align="right" sx={{ py: 0.5 }}>
+                      <Tooltip title="Edit">
+                        <IconButton aria-label={`Edit ${expense.title}`} onClick={() => onEdit(expense)} size="small">
+                          <EditOutlined fontSize="small" />
+                        </IconButton>
+                      </Tooltip>
+                    </TableCell>
+                  )}
                 </TableRow>
               ))}
         </TableBody>
@@ -80,7 +101,7 @@ function ExpenseTable({ expenses, skeletonRows }: ExpenseListProps) {
   );
 }
 
-function ExpenseCards({ expenses, skeletonRows }: ExpenseListProps) {
+function ExpenseCards({ expenses, skeletonRows, onEdit }: ExpenseListProps) {
   return (
     <List disablePadding aria-label="Expenses">
       {skeletonRows
@@ -107,6 +128,16 @@ function ExpenseCards({ expenses, skeletonRows }: ExpenseListProps) {
               </Box>
               <Stack sx={{ alignItems: 'flex-end', flexShrink: 0 }}>
                 <Typography sx={{ fontWeight: 600 }}>{formatCurrency(expense.amount)}</Typography>
+                {onEdit && (
+                  <IconButton
+                    aria-label={`Edit ${expense.title}`}
+                    onClick={() => onEdit(expense)}
+                    size="small"
+                    sx={{ mt: 0.5, mr: -0.75 }}
+                  >
+                    <EditOutlined fontSize="small" />
+                  </IconButton>
+                )}
               </Stack>
             </ListItem>
           ))}

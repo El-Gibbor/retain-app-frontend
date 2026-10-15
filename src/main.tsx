@@ -5,6 +5,7 @@ import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import App from './App';
 import { AuthProvider } from './context/AuthProvider';
+import { NotificationProvider } from './context/NotificationProvider';
 import { store } from './store';
 import { theme } from './theme';
 
@@ -15,7 +16,9 @@ createRoot(document.getElementById('root')!).render(
         <CssBaseline enableColorScheme />
         <BrowserRouter>
           <AuthProvider>
-            <App />
+            <NotificationProvider>
+              <App />
+            </NotificationProvider>
           </AuthProvider>
         </BrowserRouter>
       </ThemeProvider>

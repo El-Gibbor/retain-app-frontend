@@ -1,11 +1,14 @@
-import { ReceiptLongOutlined, SearchOffOutlined } from '@mui/icons-material';
+import { AddOutlined, ReceiptLongOutlined, SearchOffOutlined } from '@mui/icons-material';
 import { Alert, Box, Button, Card, Divider, LinearProgress, TablePagination } from '@mui/material';
+import { useState } from 'react';
 import EmptyState from '../components/common/EmptyState';
 import PageHeader from '../components/common/PageHeader';
 import ExpenseFilterBar from '../components/expenses/ExpenseFilterBar';
+import ExpenseFormDialog from '../components/expenses/ExpenseFormDialog';
 import ExpenseList from '../components/expenses/ExpenseList';
 import { useCategories } from '../hooks/useCategories';
 import { useExpenses } from '../hooks/useExpenses';
+import { useNotify } from '../hooks/useNotify';
 import {
   clearFilters,
   PAGE_SIZE_OPTIONS,
@@ -16,6 +19,9 @@ import {
   setPage,
 } from '../store/expenseFiltersSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
+import type { Expense } from '../types/expense';
+
+type FormState = { open: false } | { open: true; expense: Expense | null };
 
 export default function ExpensesPage() {
   const dispatch = useAppDispatch();
@@ -24,6 +30,18 @@ export default function ExpensesPage() {
   const activeFilterCount = useAppSelector(selectActiveFilterCount);
   const { categories } = useCategories();
   const { result, loading, error, reload } = useExpenses(query);
+  const notify = useNotify();
+  const [form, setForm] = useState<FormState>({ open: false });
+
+  const openCreate = () => setForm({ open: true, expense: null });
+  const openEdit = (expense: Expense) => setForm({ open: true, expense });
+
+  const handleSaved = (saved: Expense) => {
+    const wasEdit = form.open && form.expense !== null;
+    setForm({ open: false });
+    notify(wasEdit ? `Updated "${saved.title}"` : `Added "${saved.title}"`);
+    reload();
+  };
 
   const expenses = result?.data ?? [];
   const total = result?.pagination.total ?? 0;
@@ -31,7 +49,15 @@ export default function ExpensesPage() {
 
   return (
     <>
-      <PageHeader title="Expenses" subtitle="Record, search and manage your spending." />
+      <PageHeader
+        title="Expenses"
+        subtitle="Record, search and manage your spending."
+        actions={
+          <Button variant="contained" startIcon={<AddOutlined />} onClick={openCreate} fullWidth>
+            Add expense
+          </Button>
+        }
+      />
 
       <Card>
         <ExpenseFilterBar categories={categories} />
@@ -56,7 +82,7 @@ export default function ExpensesPage() {
           <ExpenseList expenses={[]} skeletonRows={5} />
         ) : expenses.length > 0 ? (
           <>
-            <ExpenseList expenses={expenses} />
+            <ExpenseList expenses={expenses} onEdit={openEdit} />
             <TablePagination
               component="div"
               count={total}
@@ -85,11 +111,24 @@ export default function ExpensesPage() {
             <EmptyState
               icon={<ReceiptLongOutlined />}
               title="No expenses yet"
-              description="Expenses you record will appear here."
+              description="Record your first expense to start tracking your spending."
+              action={
+                <Button variant="contained" startIcon={<AddOutlined />} onClick={openCreate}>
+                  Add expense
+                </Button>
+              }
             />
           ))
         )}
       </Card>
+
+      <ExpenseFormDialog
+        open={form.open}
+        expense={form.open ? form.expense : null}
+        categories={categories}
+        onClose={() => setForm({ open: false })}
+        onSaved={handleSaved}
+      />
     </>
   );
 }
