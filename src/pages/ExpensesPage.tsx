@@ -3,6 +3,7 @@ import { Alert, Box, Button, Card, Divider, LinearProgress, TablePagination } fr
 import { useState } from 'react';
 import EmptyState from '../components/common/EmptyState';
 import PageHeader from '../components/common/PageHeader';
+import DeleteExpenseDialog from '../components/expenses/DeleteExpenseDialog';
 import ExpenseFilterBar from '../components/expenses/ExpenseFilterBar';
 import ExpenseFormDialog from '../components/expenses/ExpenseFormDialog';
 import ExpenseList from '../components/expenses/ExpenseList';
@@ -32,6 +33,7 @@ export default function ExpensesPage() {
   const { result, loading, error, reload } = useExpenses(query);
   const notify = useNotify();
   const [form, setForm] = useState<FormState>({ open: false });
+  const [deleting, setDeleting] = useState<Expense | null>(null);
 
   const openCreate = () => setForm({ open: true, expense: null });
   const openEdit = (expense: Expense) => setForm({ open: true, expense });
@@ -41,6 +43,13 @@ export default function ExpensesPage() {
     setForm({ open: false });
     notify(wasEdit ? `Updated "${saved.title}"` : `Added "${saved.title}"`);
     reload();
+  };
+
+  const handleDeleted = () => {
+    setDeleting(null);
+    // Deleting the last row of a later page steps back instead of showing an empty page
+    if (expenses.length === 1 && page > 1) dispatch(setPage(page - 1));
+    else reload();
   };
 
   const expenses = result?.data ?? [];
@@ -82,7 +91,7 @@ export default function ExpensesPage() {
           <ExpenseList expenses={[]} skeletonRows={5} />
         ) : expenses.length > 0 ? (
           <>
-            <ExpenseList expenses={expenses} onEdit={openEdit} />
+            <ExpenseList expenses={expenses} onEdit={openEdit} onDelete={setDeleting} />
             <TablePagination
               component="div"
               count={total}
@@ -129,6 +138,7 @@ export default function ExpensesPage() {
         onClose={() => setForm({ open: false })}
         onSaved={handleSaved}
       />
+      <DeleteExpenseDialog expense={deleting} onClose={() => setDeleting(null)} onDeleted={handleDeleted} />
     </>
   );
 }

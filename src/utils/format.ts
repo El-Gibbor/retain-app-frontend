@@ -21,3 +21,13 @@ export const PAYMENT_METHOD_LABELS: Record<PaymentMethod, string> = {
   MOBILE_MONEY: 'Mobile money',
   OTHER: 'Other',
 };
+
+const dateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
+  day: 'numeric',
+  month: 'short',
+  year: 'numeric',
+  hour: '2-digit',
+  minute: '2-digit',
+});
+
+export const formatDateTime = (value: string): string => dateTimeFormatter.format(new Date(value));

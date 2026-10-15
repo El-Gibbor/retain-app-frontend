@@ -6,6 +6,7 @@ import ProtectedRoute from './components/routing/ProtectedRoute';
 import AdminPage from './pages/AdminPage';
 import BudgetPage from './pages/BudgetPage';
 import DashboardPage from './pages/DashboardPage';
+import ExpenseDetailPage from './pages/ExpenseDetailPage';
 import ExpensesPage from './pages/ExpensesPage';
 import NotFoundPage from './pages/NotFoundPage';
 import SignInPage from './pages/SignInPage';
@@ -23,6 +24,7 @@ export default function App() {
         <Route element={<AppLayout />}>
           <Route path="/" element={<DashboardPage />} />
           <Route path="/expenses" element={<ExpensesPage />} />
+          <Route path="/expenses/:id" element={<ExpenseDetailPage />} />
           <Route path="/budget" element={<BudgetPage />} />
           <Route element={<AdminRoute />}>
             <Route path="/admin" element={<AdminPage />} />
