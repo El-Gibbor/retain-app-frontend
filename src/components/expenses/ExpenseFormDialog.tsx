@@ -22,6 +22,7 @@ import { PAYMENT_METHODS, type Expense, type ExpensePayload, type PaymentMethod 
 import { todayIso } from '../../utils/date';
 import { getErrorMessage, getFieldErrors } from '../../utils/errors';
 import { PAYMENT_METHOD_LABELS } from '../../utils/format';
+import { validateAmount } from '../../utils/validation';
 
 interface ExpenseFormValues {
   title: string;
@@ -33,8 +34,6 @@ interface ExpenseFormValues {
 }
 
 type ExpenseFormErrors = Partial<Record<keyof ExpenseFormValues, string>>;
-
-const AMOUNT_PATTERN = /^\d+(\.\d{1,2})?$/;
 
 const toFormValues = (expense: Expense | null): ExpenseFormValues => ({
   title: expense?.title ?? '',
@@ -50,10 +49,8 @@ const validate = (values: ExpenseFormValues): ExpenseFormErrors => {
   if (!values.title.trim()) errors.title = 'Title is required';
   else if (values.title.trim().length > 120) errors.title = 'Title must be 120 characters or fewer';
 
-  const amount = values.amount.trim();
-  if (!amount) errors.amount = 'Amount is required';
-  else if (!AMOUNT_PATTERN.test(amount)) errors.amount = 'Use a number with up to 2 decimal places';
-  else if (Number(amount) <= 0) errors.amount = 'Amount must be greater than 0';
+  const amountError = validateAmount(values.amount);
+  if (amountError) errors.amount = amountError;
 
   if (!values.date) errors.date = 'Date is required';
   if (!values.categoryId) errors.categoryId = 'Choose a category';

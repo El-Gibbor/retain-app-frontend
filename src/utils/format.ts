@@ -31,3 +31,7 @@ const dateTimeFormatter = new Intl.DateTimeFormat('en-GB', {
 });
 
 export const formatDateTime = (value: string): string => dateTimeFormatter.format(new Date(value));
+
+const monthFormatter = new Intl.DateTimeFormat('en-GB', { month: 'long', year: 'numeric', timeZone: 'UTC' });
+
+export const formatMonth = (month: string): string => monthFormatter.format(new Date(`${month}-01T00:00:00Z`));
