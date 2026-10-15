@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useMemo, useState, type ReactNode } from 'react';
 import { authApi } from '../api/auth';
 import { onUnauthorized, setAuthToken } from '../api/client';
+import { useAppDispatch } from '../store/hooks';
+import { resetExpenseFilters } from '../store/expenseFiltersSlice';
 import type { AuthResponse, SignInPayload, SignUpPayload, User } from '../types/auth';
 import { AuthContext, type AuthContextValue, type AuthStatus } from './auth-context';
 
@@ -24,6 +26,7 @@ const storeToken = (token: string | null): void => {
 };
 
 export function AuthProvider({ children }: { children: ReactNode }) {
+  const dispatch = useAppDispatch();
   const [user, setUser] = useState<User | null>(null);
   const [status, setStatus] = useState<AuthStatus>(() =>
     readStoredToken() ? 'loading' : 'unauthenticated',
@@ -34,7 +37,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthToken(null);
     setUser(null);
     setStatus('unauthenticated');
-  }, []);
+    // Filters belong to the signed-in user, so the next person starts clean
+    dispatch(resetExpenseFilters());
+  }, [dispatch]);
 
   const startSession = useCallback(({ token, user: nextUser }: AuthResponse): User => {
     storeToken(token);
