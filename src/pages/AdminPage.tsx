@@ -6,10 +6,12 @@ import InsightsPanel from '../components/admin/InsightsPanel';
 import PageHeader from '../components/common/PageHeader';
 import { useAdminInsights } from '../hooks/useAdminInsights';
 import { useCategories } from '../hooks/useCategories';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 type AdminTab = 'insights' | 'categories';
 
 export default function AdminPage() {
+  useDocumentTitle('Admin');
   const [searchParams, setSearchParams] = useSearchParams();
   const tab: AdminTab = searchParams.get('tab') === 'categories' ? 'categories' : 'insights';
   const [insightsKey, setInsightsKey] = useState(0);

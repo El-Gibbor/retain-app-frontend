@@ -6,6 +6,7 @@ import PasswordField from '../components/auth/PasswordField';
 import { useAuth } from '../hooks/useAuth';
 import { getErrorMessage } from '../utils/errors';
 import { isValidEmail } from '../utils/validation';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 interface SignInErrors {
   email?: string;
@@ -18,6 +19,7 @@ const validate = (email: string, password: string): SignInErrors => ({
 });
 
 export default function SignInPage() {
+  useDocumentTitle('Sign in');
   const { signIn } = useAuth();
 
   const [email, setEmail] = useState('');

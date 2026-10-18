@@ -28,6 +28,26 @@ interface RequestOptions {
   signal?: AbortSignal;
 }
 
+// Free hosting tiers sleep when idle, so a request this slow usually means the API is waking up
+const SLOW_REQUEST_MS = 4000;
+
+let slowRequests = 0;
+const slowListeners = new Set<() => void>();
+
+const setSlowRequests = (next: number) => {
+  slowRequests = next;
+  slowListeners.forEach((listener) => listener());
+};
+
+/** useSyncExternalStore source for "a request has been pending for a while" */
+export const slowRequestStore = {
+  subscribe(listener: () => void) {
+    slowListeners.add(listener);
+    return () => slowListeners.delete(listener);
+  },
+  getSnapshot: () => slowRequests > 0,
+};
+
 let authToken: string | null = null;
 let unauthorizedHandler: (() => void) | null = null;
 
@@ -60,6 +80,12 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   if (body !== undefined) headers['Content-Type'] = 'application/json';
   if (authToken) headers.Authorization = `Bearer ${authToken}`;
 
+  let markedSlow = false;
+  const slowTimer = window.setTimeout(() => {
+    markedSlow = true;
+    setSlowRequests(slowRequests + 1);
+  }, SLOW_REQUEST_MS);
+
   let response: Response;
   try {
     response = await fetch(buildUrl(path, query), {
@@ -71,6 +97,9 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   } catch (error) {
     if (error instanceof DOMException && error.name === 'AbortError') throw error;
     throw new ApiError(0, 'Unable to reach the server. Check your connection and try again.');
+  } finally {
+    window.clearTimeout(slowTimer);
+    if (markedSlow) setSlowRequests(slowRequests - 1);
   }
 
   if (response.status === 204) return undefined as T;

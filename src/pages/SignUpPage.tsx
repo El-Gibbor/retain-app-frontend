@@ -6,6 +6,7 @@ import PasswordField from '../components/auth/PasswordField';
 import { useAuth } from '../hooks/useAuth';
 import { getErrorMessage, getFieldErrors } from '../utils/errors';
 import { isValidEmail, MIN_PASSWORD_LENGTH } from '../utils/validation';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 interface SignUpForm {
   name: string;
@@ -28,6 +29,7 @@ const validate = ({ name, email, password, confirmPassword }: SignUpForm): SignU
 });
 
 export default function SignUpPage() {
+  useDocumentTitle('Create account');
   const { signUp } = useAuth();
 
   const [form, setForm] = useState<SignUpForm>(initialForm);
@@ -35,9 +37,8 @@ export default function SignUpPage() {
   const [formError, setFormError] = useState<string | null>(null);
   const [submitting, setSubmitting] = useState(false);
 
-  const updateField =
-    (field: keyof SignUpForm) => (event: ChangeEvent<HTMLInputElement>) =>
-      setForm((current) => ({ ...current, [field]: event.target.value }));
+  const updateField = (field: keyof SignUpForm) => (event: ChangeEvent<HTMLInputElement>) =>
+    setForm((current) => ({ ...current, [field]: event.target.value }));
 
   const handleSubmit = async (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();

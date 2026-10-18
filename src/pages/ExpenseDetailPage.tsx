@@ -21,6 +21,7 @@ import { useExpense } from '../hooks/useExpense';
 import { useNotify } from '../hooks/useNotify';
 import type { Expense } from '../types/expense';
 import { formatCurrency, formatDate, formatDateTime, PAYMENT_METHOD_LABELS } from '../utils/format';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 function DetailRow({ label, children }: { label: string; children: ReactNode }) {
   return (
@@ -43,6 +44,7 @@ export default function ExpenseDetailPage() {
   const navigate = useNavigate();
   const notify = useNotify();
   const { expense, loading, error, notFound, replace } = useExpense(id);
+  useDocumentTitle(expense?.title ?? 'Expense');
   const { categories } = useCategories();
   const [editing, setEditing] = useState(false);
   const [deleting, setDeleting] = useState<Expense | null>(null);

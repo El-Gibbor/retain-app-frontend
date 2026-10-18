@@ -10,8 +10,10 @@ import { clearFilters, setDateRange } from '../store/expenseFiltersSlice';
 import { useAppDispatch } from '../store/hooks';
 import { currentMonth, isValidMonth, monthBounds } from '../utils/date';
 import { formatMonth } from '../utils/format';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function BudgetPage() {
+  useDocumentTitle('Budget');
   const dispatch = useAppDispatch();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();

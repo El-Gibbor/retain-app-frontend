@@ -14,8 +14,10 @@ import { useNotify } from '../hooks/useNotify';
 import { BUDGET_STATUS } from '../utils/budget';
 import { currentMonth, isValidMonth } from '../utils/date';
 import { formatCurrency, formatMonth } from '../utils/format';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function DashboardPage() {
+  useDocumentTitle('Dashboard');
   const { user } = useAuth();
   const notify = useNotify();
   const [searchParams, setSearchParams] = useSearchParams();

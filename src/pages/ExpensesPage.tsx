@@ -21,10 +21,12 @@ import {
 } from '../store/expenseFiltersSlice';
 import { useAppDispatch, useAppSelector } from '../store/hooks';
 import type { Expense } from '../types/expense';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 type FormState = { open: false } | { open: true; expense: Expense | null };
 
 export default function ExpensesPage() {
+  useDocumentTitle('Expenses');
   const dispatch = useAppDispatch();
   const query = useAppSelector(selectExpenseQuery);
   const { page, limit } = useAppSelector(selectExpenseFilters);
@@ -71,7 +73,9 @@ export default function ExpensesPage() {
       <Card>
         <ExpenseFilterBar categories={categories} />
         <Divider />
-        <Box sx={{ height: 4 }}>{loading && !firstLoad && <LinearProgress aria-label="Updating results" />}</Box>
+        <Box sx={{ height: 4 }}>
+          {loading && !firstLoad && <LinearProgress aria-label="Updating results" />}
+        </Box>
 
         {error && (
           <Alert

@@ -1,7 +1,9 @@
 import { Box, Button, Typography } from '@mui/material';
 import { Link as RouterLink } from 'react-router';
+import { useDocumentTitle } from '../hooks/useDocumentTitle';
 
 export default function NotFoundPage() {
+  useDocumentTitle('Page not found');
   return (
     <Box
       sx={{

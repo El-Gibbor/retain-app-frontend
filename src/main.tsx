@@ -4,6 +4,8 @@ import { createRoot } from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { BrowserRouter } from 'react-router';
 import App from './App';
+import ErrorBoundary from './components/common/ErrorBoundary';
+import ServerWakeNotice from './components/common/ServerWakeNotice';
 import { AuthProvider } from './context/AuthProvider';
 import { NotificationProvider } from './context/NotificationProvider';
 import { store } from './store';
@@ -17,7 +19,10 @@ createRoot(document.getElementById('root')!).render(
         <BrowserRouter>
           <AuthProvider>
             <NotificationProvider>
-              <App />
+              <ErrorBoundary>
+                <App />
+              </ErrorBoundary>
+              <ServerWakeNotice />
             </NotificationProvider>
           </AuthProvider>
         </BrowserRouter>
