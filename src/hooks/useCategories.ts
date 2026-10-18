@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { categoriesApi } from '../api/categories';
 import type { Category } from '../types/category';
 import { getErrorMessage } from '../utils/errors';
@@ -9,8 +9,9 @@ interface CategoriesState {
   error: string | null;
 }
 
-export function useCategories(): CategoriesState {
+export function useCategories(): CategoriesState & { reload: () => void } {
   const [state, setState] = useState<CategoriesState>({ categories: [], loading: true, error: null });
+  const [reloadKey, setReloadKey] = useState(0);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -22,7 +23,10 @@ export function useCategories(): CategoriesState {
         setState({ categories: [], loading: false, error: getErrorMessage(error) });
       });
     return () => controller.abort();
-  }, []);
+  }, [reloadKey]);
 
-  return state;
+  // Existing categories stay listed while the refreshed list loads
+  const reload = useCallback(() => setReloadKey((key) => key + 1), []);
+
+  return { ...state, reload };
 }

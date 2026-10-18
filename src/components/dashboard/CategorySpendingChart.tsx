@@ -19,8 +19,15 @@ import { useState } from 'react';
 import type { CategorySpending } from '../../types/dashboard';
 import { formatCurrency } from '../../utils/format';
 
+// Admin data has no percentage, so it is derived from the totals when missing
+type CategoryBar = Pick<CategorySpending, 'categoryId' | 'name' | 'total' | 'count'> & {
+  percentage?: number;
+};
+
 interface CategorySpendingChartProps {
-  data: CategorySpending[];
+  data: CategoryBar[];
+  title?: string;
+  emptyMessage?: string;
   loading: boolean;
 }
 
@@ -80,7 +87,7 @@ function BarChart({ data }: { data: CategorySpending[] }) {
                   sx={{
                     height: BAR_THICKNESS,
                     width: `${width}%`,
-                    minWidth: 4,
+                    minWidth: item.total > 0 ? 4 : 0,
                     bgcolor: 'primary.main',
                     // Square at the baseline, rounded at the data end
                     borderRadius: '0 4px 4px 0',
@@ -127,15 +134,29 @@ function DataTable({ data }: { data: CategorySpending[] }) {
   );
 }
 
-export default function CategorySpendingChart({ data, loading }: CategorySpendingChartProps) {
+const withPercentages = (data: CategoryBar[]): CategorySpending[] => {
+  const sum = data.reduce((total, item) => total + item.total, 0);
+  return data.map((item) => ({
+    ...item,
+    percentage: item.percentage ?? (sum > 0 ? Math.round((item.total / sum) * 1000) / 10 : 0),
+  }));
+};
+
+export default function CategorySpendingChart({
+  data: rawData,
+  loading,
+  title = 'Spending by category',
+  emptyMessage = 'No spending recorded this month.',
+}: CategorySpendingChartProps) {
   const [view, setView] = useState<View>('chart');
+  const data = withPercentages(rawData);
 
   return (
     <Card sx={{ height: '100%' }}>
       <CardContent sx={{ p: { xs: 2.5, sm: 3 } }}>
         <Stack direction="row" sx={{ justifyContent: 'space-between', alignItems: 'center', mb: 2.5 }}>
           <Typography variant="h6" component="h2">
-            Spending by category
+            {title}
           </Typography>
           <ToggleButtonGroup
             size="small"
@@ -161,7 +182,7 @@ export default function CategorySpendingChart({ data, loading }: CategorySpendin
           </Stack>
         ) : data.length === 0 ? (
           <Typography color="text.secondary" sx={{ py: 4, textAlign: 'center' }}>
-            No spending recorded this month.
+            {emptyMessage}
           </Typography>
         ) : view === 'chart' ? (
           <BarChart data={data} />
