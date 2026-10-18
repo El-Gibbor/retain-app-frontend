@@ -23,8 +23,7 @@ export default function DashboardPage() {
   const [searchParams, setSearchParams] = useSearchParams();
   const requested = searchParams.get('month');
   const month = isValidMonth(requested) ? requested : currentMonth();
-  const [refreshKey, setRefreshKey] = useState(0);
-  const { summary, loading, error } = useDashboard(month, refreshKey);
+  const { summary, loading, error, reload } = useDashboard(month);
   const { categories } = useCategories();
   const [adding, setAdding] = useState(false);
 
@@ -155,7 +154,7 @@ export default function DashboardPage() {
         onSaved={(saved) => {
           setAdding(false);
           notify(`Added "${saved.title}"`);
-          setRefreshKey((key) => key + 1);
+          reload();
         }}
       />
     </>

@@ -1,5 +1,5 @@
 import { Box, Tab, Tabs } from '@mui/material';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useSearchParams } from 'react-router';
 import CategoryManager from '../components/admin/CategoryManager';
 import InsightsPanel from '../components/admin/InsightsPanel';
@@ -14,8 +14,12 @@ export default function AdminPage() {
   useDocumentTitle('Admin');
   const [searchParams, setSearchParams] = useSearchParams();
   const tab: AdminTab = searchParams.get('tab') === 'categories' ? 'categories' : 'insights';
-  const [insightsKey, setInsightsKey] = useState(0);
-  const { insights, loading: insightsLoading, error: insightsError } = useAdminInsights(insightsKey);
+  const {
+    insights,
+    loading: insightsLoading,
+    error: insightsError,
+    reload: reloadInsights,
+  } = useAdminInsights();
   const {
     categories,
     loading: categoriesLoading,
@@ -32,8 +36,8 @@ export default function AdminPage() {
   // Category changes affect both the list and the insights figures
   const handleCategoriesChanged = useCallback(() => {
     reloadCategories();
-    setInsightsKey((key) => key + 1);
-  }, [reloadCategories]);
+    reloadInsights();
+  }, [reloadCategories, reloadInsights]);
 
   return (
     <>
