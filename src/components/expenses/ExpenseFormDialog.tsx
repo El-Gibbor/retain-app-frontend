@@ -59,12 +59,13 @@ const validate = (values: ExpenseFormValues): ExpenseFormErrors => {
   return errors;
 };
 
-const toPayload = (values: ExpenseFormValues): ExpensePayload => ({
+// Called after validation, with the payment method already narrowed from '' to a real value
+const toPayload = (values: ExpenseFormValues, paymentMethod: PaymentMethod): ExpensePayload => ({
   title: values.title.trim(),
   amount: Number(values.amount),
   date: values.date,
   categoryId: values.categoryId,
-  paymentMethod: values.paymentMethod as PaymentMethod,
+  paymentMethod,
   notes: values.notes.trim() || null,
 });
 
@@ -98,12 +99,13 @@ function ExpenseForm({ expense, categories, onClose, onSaved }: Omit<ExpenseForm
     event.preventDefault();
     const nextErrors = validate(values);
     setErrors(nextErrors);
-    if (Object.keys(nextErrors).length > 0) return;
+    const { paymentMethod } = values;
+    if (Object.keys(nextErrors).length > 0 || !paymentMethod) return;
 
     setSubmitting(true);
     setFormError(null);
     try {
-      const payload = toPayload(values);
+      const payload = toPayload(values, paymentMethod);
       const saved = isEdit
         ? await expensesApi.update(expense.id, payload)
         : await expensesApi.create(payload);

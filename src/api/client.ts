@@ -7,6 +7,15 @@ export interface ApiErrorBody {
   };
 }
 
+const isApiErrorBody = (value: unknown): value is ApiErrorBody =>
+  typeof value === 'object' &&
+  value !== null &&
+  'error' in value &&
+  typeof value.error === 'object' &&
+  value.error !== null &&
+  'message' in value.error &&
+  typeof value.error.message === 'string';
+
 export class ApiError extends Error {
   readonly status: number;
   readonly details?: Record<string, string[]>;
@@ -107,7 +116,7 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   const data: unknown = await response.json().catch(() => null);
 
   if (!response.ok) {
-    const errorBody = (data as ApiErrorBody | null)?.error;
+    const errorBody = isApiErrorBody(data) ? data.error : undefined;
     if (response.status === 401 && authToken) unauthorizedHandler?.();
     throw new ApiError(
       response.status,
@@ -116,5 +125,6 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
     );
   }
 
+  // The single typed boundary: endpoint modules declare the shape each route returns
   return data as T;
 }

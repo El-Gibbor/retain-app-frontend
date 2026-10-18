@@ -36,7 +36,8 @@ interface ExpenseListProps {
 const detailPath = (expense: Expense) => `/expenses/${expense.id}`;
 
 // Clicks on buttons and links inside a row keep their own behaviour
-const isInteractive = (event: MouseEvent) => (event.target as HTMLElement).closest('a, button') !== null;
+const isInteractive = (event: MouseEvent) =>
+  event.target instanceof Element && event.target.closest('a, button') !== null;
 
 function ExpenseTitleLink({ expense }: { expense: Expense }) {
   return (
