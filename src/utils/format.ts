@@ -1,6 +1,10 @@
 import type { PaymentMethod } from '../types/expense';
 
-const currencyFormatter = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' });
+const currencyFormatter = new Intl.NumberFormat('en-RW', {
+  style: 'currency',
+  currency: 'RWF',
+  currencyDisplay: 'code',
+});
 
 const dateFormatter = new Intl.DateTimeFormat('en-GB', {
   day: 'numeric',

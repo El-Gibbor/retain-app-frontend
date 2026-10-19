@@ -4,13 +4,13 @@ export const isValidEmail = (value: string): boolean => EMAIL_PATTERN.test(value
 
 export const MIN_PASSWORD_LENGTH = 8;
 
-const AMOUNT_PATTERN = /^\d+(\.\d{1,2})?$/;
+const AMOUNT_PATTERN = /^\d+$/;
 
-// Returns an error message, or null when the amount is a positive value with at most 2 decimals
+// Returns an error message, or null when the amount is a positive whole number of francs
 export const validateAmount = (value: string): string | null => {
   const amount = value.trim();
   if (!amount) return 'Amount is required';
-  if (!AMOUNT_PATTERN.test(amount)) return 'Use a number with up to 2 decimal places';
+  if (!AMOUNT_PATTERN.test(amount)) return 'Use a whole number of francs';
   if (Number(amount) <= 0) return 'Amount must be greater than 0';
   return null;
 };

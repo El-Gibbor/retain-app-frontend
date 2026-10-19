@@ -16,7 +16,7 @@ interface BudgetFormProps {
 // Remount with key={month} so the field resets when the month changes
 export default function BudgetForm({ month, current, onSaved }: BudgetFormProps) {
   const notify = useNotify();
-  const [amount, setAmount] = useState(current === null ? '' : current.toFixed(2));
+  const [amount, setAmount] = useState(current === null ? '' : String(Math.round(current)));
   const [error, setError] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const unchanged = current !== null && Number(amount) === current;
@@ -58,8 +58,8 @@ export default function BudgetForm({ month, current, onSaved }: BudgetFormProps)
         error={Boolean(error)}
         helperText={error ?? ' '}
         slotProps={{
-          input: { startAdornment: <InputAdornment position="start">$</InputAdornment> },
-          htmlInput: { inputMode: 'decimal' },
+          input: { startAdornment: <InputAdornment position="start">RWF</InputAdornment> },
+          htmlInput: { inputMode: 'numeric' },
         }}
         sx={{ maxWidth: { sm: 280 } }}
       />

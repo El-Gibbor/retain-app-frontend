@@ -37,7 +37,7 @@ type ExpenseFormErrors = Partial<Record<keyof ExpenseFormValues, string>>;
 
 const toFormValues = (expense: Expense | null): ExpenseFormValues => ({
   title: expense?.title ?? '',
-  amount: expense ? expense.amount.toFixed(2) : '',
+  amount: expense ? String(Math.round(expense.amount)) : '',
   date: expense?.date ?? todayIso(),
   categoryId: expense?.category.id ?? '',
   paymentMethod: expense?.paymentMethod ?? '',
@@ -165,8 +165,8 @@ function ExpenseForm({ expense, categories, onClose, onSaved }: Omit<ExpenseForm
                 helperText={errors.amount}
                 required
                 slotProps={{
-                  input: { startAdornment: <InputAdornment position="start">$</InputAdornment> },
-                  htmlInput: { inputMode: 'decimal' },
+                  input: { startAdornment: <InputAdornment position="start">RWF</InputAdornment> },
+                  htmlInput: { inputMode: 'numeric' },
                 }}
               />
               <TextField

@@ -27,7 +27,7 @@ const toAmount = (value: string): number | null => {
   return Number.isFinite(parsed) && parsed >= 0 ? parsed : null;
 };
 
-const amountInputProps = { htmlInput: { min: 0, step: '0.01', inputMode: 'decimal' as const } };
+const amountInputProps = { htmlInput: { min: 0, step: '1', inputMode: 'numeric' as const } };
 
 interface ExpenseFilterPanelProps {
   categories: Category[];
